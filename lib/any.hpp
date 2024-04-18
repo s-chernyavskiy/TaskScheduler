@@ -41,7 +41,7 @@ class any {
   }
 
   template<typename T, typename... Args>
-  std::decay_t<T>& emplace(Args... args) noexcept {
+  T& emplace(Args... args) noexcept {
     auto new_inst = new Derived<T>(args...);
     T& value = static_cast<Derived<T>*>(new_inst)->value;
     instance = new_inst;
@@ -50,7 +50,7 @@ class any {
 
   template<typename T>
   any(T&& value) noexcept {
-    emplace<std::remove_reference_t<T>>(std::forward<T>(value));
+    emplace<T>(std::forward<T>(value));
   }
 
   void swap(any& other) noexcept {
@@ -78,8 +78,7 @@ class bad_any_cast : public std::exception {
 
 template<typename T>
 T any_cast(any& anything) {
-  using value_type = std::remove_cv_t<std::remove_reference_t<T>>;
-  if (auto* value = any_cast<value_type>(&anything)) {
+  if (auto* value = any_cast<T>(&anything)) {
     return static_cast<T>(*value);
   } else {
     throw bad_any_cast();
