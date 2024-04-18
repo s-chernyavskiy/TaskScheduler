@@ -10,6 +10,7 @@ class TTaskScheduler {
   struct ITask {
     virtual ~ITask() = default;
     virtual luvabl::any execute() = 0;
+    virtual bool is_executed() const = 0;
   };
 
   template<typename Func, typename T>
@@ -17,11 +18,21 @@ class TTaskScheduler {
     Func func;
     int arg1;
     int arg2;
+    bool executed = false;
 
     Task(Func f, T a1, T a2) : func(f), arg1(a1), arg2(a2) {}
 
     luvabl::any execute() override {
-      return func(arg1, arg2);
+      if (!executed) {
+        auto result = func(arg1, arg2);
+        executed = true;
+        return result;
+      }
+      return {};
+    }
+
+    bool is_executed() const override {
+      return executed;
     }
   };
 
@@ -40,7 +51,9 @@ class TTaskScheduler {
 
   void executeAll() {
     for (size_t i = 0; i < tasks.size(); ++i) {
-      results[i] = tasks[i]->execute();
+      if (!tasks[i]->is_executed()) {
+        results[i] = tasks[i]->execute();
+      }
     }
   }
 
@@ -51,7 +64,7 @@ class TTaskScheduler {
 
   template<typename T>
   T getFutureResult(size_t id) {
-    while (results.find(id) == results.end()) { // fixme
+    while (results.find(id) == results.end()) {
       executeAll();
     }
     return luvabl::any_cast<T>(results[id]);
