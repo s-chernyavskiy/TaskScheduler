@@ -12,18 +12,20 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(
-        scheduler_tests
+        lib_tests
+        any_tests.cpp
         scheduler_tests.cpp
 )
 
 target_link_libraries(
-        scheduler_tests
+        lib_tests
         scheduler
+        any
         GTest::gtest_main
 )
 
-target_include_directories(scheduler_tests PUBLIC ${PROJECT_SOURCE_DIR})
+target_include_directories(lib_tests PUBLIC ${PROJECT_SOURCE_DIR})
 
 include(GoogleTest)
 
-gtest_discover_tests(scheduler_tests)
+gtest_discover_tests(lib_tests)
