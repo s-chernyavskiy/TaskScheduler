@@ -5,6 +5,8 @@
 #include <map>
 #include <vector>
 
+namespace luvabl {
+
 class TTaskScheduler {
  private:
   struct ITask {
@@ -70,3 +72,5 @@ class TTaskScheduler {
     return luvabl::any_cast<T>(results[id]);
   }
 };
+
+} // namespace luvabl

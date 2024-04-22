@@ -9,7 +9,7 @@ int main() {
   float b = -2;
   float c = 0;
 
-  TTaskScheduler scheduler;
+  luvabl::TTaskScheduler scheduler;
 
   auto id1 = scheduler.add([](float a, float c) { return -4 * a * c; }, a, c);
 
